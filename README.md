@@ -12,7 +12,7 @@ Aplikasi sederhana untuk menghitung luas beberapa bangun datar. Project ini dibu
 - Menghitung luas trapesium
 - Menghitung luas belah ketupat atau layang-layang
 
-Input angka dilakukan melalui dialog prompt browser, lalu hasilnya ditampilkan pada halaman.
+Input dilakukan melalui dialog prompt browser. Nilai harus berupa angka yang lebih besar dari 0; membatalkan prompt akan menghentikan perhitungan tanpa mengubah hasil sebelumnya. Hasil ditampilkan dengan dua angka di belakang koma.
 
 ## Teknologi
 

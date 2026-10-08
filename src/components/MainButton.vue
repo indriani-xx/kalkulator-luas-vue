@@ -1,118 +1,121 @@
 <script setup lang="ts">
-import {ref} from 'vue'
+import { reactive } from 'vue'
 
-const luasPP = ref<number | null>(null)
-const hitungLuas = () => {
-let p = Number(prompt('panjang : '))
-let l = Number(prompt('lebar : '))
-
-luasPP.value = p * l
+type Shape = {
+  id: string
+  label: string
+  inputs: string[]
+  calculate: (values: number[]) => number
 }
 
-const luasPersegi = ref<number | null>(null)
-const hitungLuasPersegi = () => {
-let s = Number(prompt('sisi : '))
+const shapes: Shape[] = [
+  {
+    id: 'rectangle',
+    label: 'Persegi Panjang',
+    inputs: ['Panjang', 'Lebar'],
+    calculate: ([length = 0, width = 0]) => length * width,
+  },
+  {
+    id: 'square',
+    label: 'Persegi',
+    inputs: ['Sisi'],
+    calculate: ([side = 0]) => side * side,
+  },
+  {
+    id: 'triangle',
+    label: 'Segitiga',
+    inputs: ['Alas', 'Tinggi'],
+    calculate: ([base = 0, height = 0]) => (base * height) / 2,
+  },
+  {
+    id: 'circle',
+    label: 'Lingkaran',
+    inputs: ['Jari-jari'],
+    calculate: ([radius = 0]) => Math.PI * radius * radius,
+  },
+  {
+    id: 'parallelogram',
+    label: 'Jajar Genjang',
+    inputs: ['Alas', 'Tinggi'],
+    calculate: ([base = 0, height = 0]) => base * height,
+  },
+  {
+    id: 'trapezoid',
+    label: 'Trapesium',
+    inputs: ['Sisi sejajar 1', 'Sisi sejajar 2', 'Tinggi'],
+    calculate: ([firstSide = 0, secondSide = 0, height = 0]) =>
+      ((firstSide + secondSide) * height) / 2,
+  },
+  {
+    id: 'kite',
+    label: 'Belah Ketupat / Layang-layang',
+    inputs: ['Diagonal 1', 'Diagonal 2'],
+    calculate: ([firstDiagonal = 0, secondDiagonal = 0]) =>
+      (firstDiagonal * secondDiagonal) / 2,
+  },
+]
 
-luasPersegi.value = s*s
+const results = reactive<Record<string, number>>({})
+
+function promptForPositiveNumber(label: string): number | null {
+  const input = prompt(`${label}:`)
+
+  if (input === null) {
+    return null
+  }
+
+  const value = Number(input)
+  if (!Number.isFinite(value) || value <= 0) {
+    alert('Masukkan angka yang valid dan lebih besar dari 0.')
+    return null
+  }
+
+  return value
 }
 
-const luasSegiTiga = ref<number | null>(null)
-const hitungLuasSegiTiga = () => {
-let a = Number(prompt('alas : '))
-let t = Number(prompt('tinggi : '))
+function calculateArea(shape: Shape) {
+  const values: number[] = []
 
-luasSegiTiga.value = a * t /2
+  for (const inputLabel of shape.inputs) {
+    const value = promptForPositiveNumber(inputLabel)
+    if (value === null) {
+      return
+    }
+
+    values.push(value)
+  }
+
+  results[shape.id] = shape.calculate(values)
 }
 
-const luasLingkaran = ref<string | null>(null)
-const hitungLuasLingkaran = () => {
-const phi = 22/7
-let r = Number(prompt('jari - jari : '))
-
-
-luasLingkaran.value = (phi * r * r).toFixed(2)
-}
-
-const luasJaGen = ref<number | null>(null)
-const hitungLuasJaGen = () => {
-let a = Number(prompt('alas : '))
-let t = Number(prompt('tinggi : '))
-
-luasJaGen.value = a * t 
-}
-
-const luasTrapesium = ref<string | null>(null)
-const hitungLuasTrapesium = () => {
-let a = Number(prompt('sisi sejajar 1 : '))
-let b = Number(prompt(' sisi sejajar 2 : '))
-let t = Number(prompt('tinggi : '))
-
-luasTrapesium.value = (0.5 * (a+b) * t).toFixed(2)
-}
-
-const luasKetupat = ref<string | null>(null)
-const hitungLuasKetupat = () => {
-let d1 = Number(prompt('diagonal 1 : '))
-let d2 = Number(prompt('diagonal 2 : '))
-
-luasKetupat.value = (d1 * d2 /2).toFixed(2)
+function formatResult(value: number | undefined): string {
+  return value === undefined ? '-' : value.toFixed(2)
 }
 </script>
 
 <template>
   <div class="container">
-
     <div class="grid">
-      <div class="card">
-        <button class="btn" @click="hitungLuas">Luas Persegi Panjang</button>
-        <p class="result">Hasil: <span>{{ luasPP ?? '-' }}</span></p>
-      </div>
-
-      <div class="card">
-        <button class="btn" @click="hitungLuasPersegi">Luas Persegi</button>
-        <p class="result">Hasil: <span>{{ luasPersegi ?? '-' }}</span></p>
-      </div>
-
-      <div class="card">
-        <button class="btn" @click="hitungLuasSegiTiga">Luas Segitiga</button>
-        <p class="result">Hasil: <span>{{ luasSegiTiga ?? '-' }}</span></p>
-      </div>
-
-      <div class="card">
-        <button class="btn" @click="hitungLuasLingkaran">Luas Lingkaran</button>
-        <p class="result">Hasil: <span>{{ luasLingkaran ?? '-' }}</span></p>
-      </div>
-
-      <div class="card">
-        <button class="btn" @click="hitungLuasJaGen">Luas Jajar Genjang</button>
-        <p class="result">Hasil: <span>{{ luasJaGen ?? '-' }}</span></p>
-      </div>
-
-      <div class="card">
-        <button class="btn" @click="hitungLuasTrapesium">Luas Trapesium</button>
-        <p class="result">Hasil: <span>{{ luasTrapesium ?? '-' }}</span></p>
-      </div>
-
-      <div class="card">
-        <button class="btn" @click="hitungLuasKetupat">
-          Luas Ketupat / Layang-layang
+      <div v-for="shape in shapes" :key="shape.id" class="card">
+        <button class="btn" type="button" @click="calculateArea(shape)">
+          Luas {{ shape.label }}
         </button>
-        <p class="result">Hasil: <span>{{ luasKetupat ?? '-' }}</span></p>
+        <p class="result">
+          Hasil: <span>{{ formatResult(results[shape.id]) }}</span>
+        </p>
       </div>
     </div>
   </div>
 </template>
 
-
 <style scoped>
 .container {
   max-width: 1000px;
+  min-height: 100vh;
   margin: 0 auto;
   padding: 40px 20px;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  min-height: 100vh;
 }
-
 
 .grid {
   display: grid;
@@ -121,64 +124,64 @@ luasKetupat.value = (d1 * d2 /2).toFixed(2)
 }
 
 .card {
-  background: #e5e4e4;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding: 20px;
+  background: #e5e4e4;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 6%);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 24px rgba(79, 70, 229, 0.15);
+  box-shadow: 0 10px 24px rgb(79 70 229 / 15%);
 }
 
 .btn {
   width: 100%;
   padding: 14px 18px;
-  border: none;
-  border-radius: 10px;
+  color: #fff;
   font-size: 15px;
   font-weight: 600;
-  color: #ffffff;
+  letter-spacing: 0.3px;
   cursor: pointer;
   background: linear-gradient(135deg, #4c4ebc 0%, #8b5cf6 100%);
-  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.35);
-  transition: all 0.25s ease;
-  letter-spacing: 0.3px;
+  border: 0;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgb(99 102 241 / 35%);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 
 .btn:hover {
   background: linear-gradient(135deg, #4b43d7 0%, #6f36d0 100%);
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 6px 16px rgb(99 102 241 / 50%);
   transform: translateY(-2px);
 }
 
 .btn:active {
+  box-shadow: 0 2px 6px rgb(99 102 241 / 40%);
   transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.4);
 }
 
 .btn:focus-visible {
-  outline: 3px solid rgba(139, 92, 246, 0.4);
+  outline: 3px solid rgb(139 92 246 / 40%);
   outline-offset: 2px;
 }
 
 .result {
-  text-align: center;
-  font-size: 14px;
-  color: #64748b;
   margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  text-align: center;
 }
 
 .result span {
   display: inline-block;
   margin-left: 4px;
-  font-weight: 700;
   color: #4f46e5;
   font-size: 16px;
+  font-weight: 700;
 }
 </style>
